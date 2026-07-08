@@ -8,7 +8,7 @@
 
 class App {
 public:
-    App();
+    App(bool show_hidden);
     ~App();
     int run();
 
@@ -44,6 +44,7 @@ private:
     std::vector<Entry> child_entries;
     std::vector<std::string> file_preview;
     bool is_file_preview;
+    bool show_hidden;
 
     int max_y, max_x;
     int col_width;

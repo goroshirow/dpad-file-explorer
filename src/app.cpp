@@ -8,12 +8,12 @@
 
 namespace fs = std::filesystem;
 
-App::App() : 
+App::App(bool show_hidden) : 
     selected_idx(0), cd_path(""), search_mode(false), search_query(""),
     preview_selected_idx(0), preview_focused(false),
     command_mode(false), command_input(""), rename_mode(false), rename_input(""),
     delete_confirm_mode(false), create_file_mode(false), create_dir_mode(false), create_input(""),
-    is_file_preview(false), should_exit(false)
+    is_file_preview(false), show_hidden(show_hidden), should_exit(false)
 {
     setenv("ESCDELAY", "25", 1); // Make ESC key responsive
     FILE* tty = fopen("/dev/tty", "r+");
@@ -35,7 +35,7 @@ App::App() :
     init_pair(3, COLOR_WHITE, COLOR_BLUE); // Selected Directory color
 
     current_path = fs::current_path();
-    current_entries = get_directory_contents(current_path);
+    current_entries = get_directory_contents(current_path, show_hidden);
     selected_idx = (current_entries.size() > 1 && current_entries[0].name == "..") ? 1 : 0;
 }
 
@@ -57,13 +57,13 @@ int App::run() {
         fs::path grandparent_path = parent_path.parent_path();
 
         if (current_path != parent_path) {
-            parent_entries = get_directory_contents(parent_path);
+            parent_entries = get_directory_contents(parent_path, show_hidden);
         } else {
             parent_entries.clear();
         }
         
         if (parent_path != grandparent_path) {
-            grandparent_entries = get_directory_contents(grandparent_path);
+            grandparent_entries = get_directory_contents(grandparent_path, show_hidden);
         } else {
             grandparent_entries.clear();
         }
@@ -75,7 +75,7 @@ int App::run() {
         if (!current_entries.empty() && selected_idx < static_cast<int>(current_entries.size())) {
             if (current_entries[selected_idx].is_dir) {
                 if (current_entries[selected_idx].name != "..") {
-                    child_entries = get_directory_contents(current_entries[selected_idx].path);
+                    child_entries = get_directory_contents(current_entries[selected_idx].path, show_hidden);
                 }
             } else {
                 is_file_preview = true;
@@ -247,7 +247,7 @@ void App::handle_input() {
                 fs::path new_path = current_path / rename_input;
                 std::error_code ec;
                 fs::rename(current_entries[selected_idx].path, new_path, ec);
-                current_entries = get_directory_contents(current_path);
+                current_entries = get_directory_contents(current_path, show_hidden);
                 for (int i = 0; i < static_cast<int>(current_entries.size()); ++i) {
                     if (current_entries[i].name == rename_input) {
                         selected_idx = i;
@@ -268,7 +268,7 @@ void App::handle_input() {
         if (ch == 'y' || ch == 'Y') {
             std::error_code ec;
             fs::remove_all(current_entries[selected_idx].path, ec);
-            current_entries = get_directory_contents(current_path);
+            current_entries = get_directory_contents(current_path, show_hidden);
             if (selected_idx >= static_cast<int>(current_entries.size())) {
                 selected_idx = std::max(0, static_cast<int>(current_entries.size()) - 1);
             }
@@ -293,7 +293,7 @@ void App::handle_input() {
                         outfile.close();
                     }
                 }
-                current_entries = get_directory_contents(current_path);
+                current_entries = get_directory_contents(current_path, show_hidden);
                 for (int i = 0; i < static_cast<int>(current_entries.size()); ++i) {
                     if (current_entries[i].name == create_input) {
                         selected_idx = i;
@@ -342,7 +342,7 @@ void App::handle_input() {
                     }
                     if (can_delete_immediately) {
                         fs::remove(p, ec);
-                        current_entries = get_directory_contents(current_path);
+                        current_entries = get_directory_contents(current_path, show_hidden);
                         if (selected_idx >= static_cast<int>(current_entries.size())) {
                             selected_idx = std::max(0, static_cast<int>(current_entries.size()) - 1);
                         }
@@ -366,7 +366,7 @@ void App::handle_input() {
                     int ret = system(cmd.c_str());
                     (void)ret;
                     refresh();
-                    current_entries = get_directory_contents(current_path);
+                    current_entries = get_directory_contents(current_path, show_hidden);
                 }
             } else {
                 bool valid_prefix = false;
@@ -437,7 +437,7 @@ void App::handle_input() {
         if (current_path != current_path.parent_path()) {
             fs::path old_path = current_path;
             current_path = current_path.parent_path();
-            current_entries = get_directory_contents(current_path);
+            current_entries = get_directory_contents(current_path, show_hidden);
             selected_idx = (current_entries.size() > 1 && current_entries[0].name == "..") ? 1 : 0;
             for (int i = 0; i < static_cast<int>(current_entries.size()); ++i) {
                 if (current_entries[i].path == old_path) {
@@ -452,7 +452,7 @@ void App::handle_input() {
                 if (current_entries[selected_idx].name == "..") {
                     fs::path old_path = current_path;
                     current_path = current_path.parent_path();
-                    current_entries = get_directory_contents(current_path);
+                    current_entries = get_directory_contents(current_path, show_hidden);
                     selected_idx = (current_entries.size() > 1 && current_entries[0].name == "..") ? 1 : 0;
                     for (int i = 0; i < static_cast<int>(current_entries.size()); ++i) {
                         if (current_entries[i].path == old_path) {
@@ -462,7 +462,7 @@ void App::handle_input() {
                     }
                 } else {
                     current_path = current_entries[selected_idx].path;
-                    current_entries = get_directory_contents(current_path);
+                    current_entries = get_directory_contents(current_path, show_hidden);
                     selected_idx = (current_entries.size() > 1 && current_entries[0].name == "..") ? 1 : 0;
                 }
             } else if (is_file_preview) {

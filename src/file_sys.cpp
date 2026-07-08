@@ -4,7 +4,7 @@
 
 namespace fs = std::filesystem;
 
-std::vector<Entry> get_directory_contents(const fs::path& p) {
+std::vector<Entry> get_directory_contents(const fs::path& p, bool show_hidden) {
     std::vector<Entry> entries;
     if (!fs::exists(p) || !fs::is_directory(p)) {
         return entries;
@@ -17,8 +17,12 @@ std::vector<Entry> get_directory_contents(const fs::path& p) {
 
     try {
         for (const auto& entry : fs::directory_iterator(p)) {
+            std::string filename = entry.path().filename().string();
+            if (!show_hidden && !filename.empty() && filename[0] == '.') {
+                continue;
+            }
             bool is_dir = fs::is_directory(entry.status());
-            entries.push_back({entry.path().filename().string(), is_dir, entry.path()});
+            entries.push_back({filename, is_dir, entry.path()});
         }
     } catch (...) {
         // Ignore permission denied etc.

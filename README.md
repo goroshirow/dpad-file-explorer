@@ -51,9 +51,11 @@ To enable the core feature—pressing `Enter` on a directory to actually change 
 
 By defining this function, you can also call the explorer from anywhere using the `dpad` command, without needing to place the executable in your `bin` directory.
 
-Add the following to your `~/.bashrc` (or `~/.zshrc`):
+Run the following command to append the function to your `~/.bashrc` (or `~/.zshrc`).
+(Make sure to replace `/path/to/...` with the actual absolute path on your system before running it)
 
 ```bash
+cat << 'EOF' >> ~/.bashrc
 function dpad() {
     # Specify the absolute path to the compiled executable
     # Example: local dest=$(/home/user/dpad-file-explorer/build/dpad_explorer)
@@ -63,6 +65,7 @@ function dpad() {
         cd "$dest"
     fi
 }
+EOF
 ```
 
 After adding it, reload your shell config:
@@ -72,6 +75,12 @@ source ~/.bashrc
 ```
 
 Now, simply typing `dpad` in your terminal will launch the explorer from anywhere, and exit to the selected directory.
+
+### Command Line Arguments
+
+| Argument | Description |
+| --- | --- |
+| `--all` | Show hidden files and directories (files starting with a dot). |
 
 ## Keybindings and Commands
 
