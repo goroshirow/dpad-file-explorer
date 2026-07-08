@@ -1,3 +1,0 @@
-/home/wsl1/dpad-file-explorer/build/CMakeFiles/dpad_explorer.dir
-/home/wsl1/dpad-file-explorer/build/CMakeFiles/edit_cache.dir
-/home/wsl1/dpad-file-explorer/build/CMakeFiles/rebuild_cache.dir

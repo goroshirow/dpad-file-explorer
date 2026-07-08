@@ -1,3 +1,8 @@
+# Build directories
+build/
+cmake-build-debug/
+cmake-build-release/
+
 # Build artifacts
 *.o
 dpad_explorer
