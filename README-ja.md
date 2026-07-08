@@ -20,26 +20,30 @@ Linuxターミナル向けの、高速なキーボード駆動（矢印キー）
 
 - **OS**: Linux / macOS (標準的なPOSIXターミナル環境)
 - **コンパイラ**: `g++` (C++17以上)
+- **ビルドツール**: `cmake` (バージョン3.10以上), `make`
 - **ライブラリ**: `ncurses` (ワイド文字サポートが必要)
 
 ### 依存関係のインストール (Ubuntu/Debian)
 
 ```bash
 sudo apt update
-sudo apt install -y g++ make libncurses5-dev libncursesw5-dev
+sudo apt install -y g++ cmake make libncurses5-dev libncursesw5-dev
 ```
 
 ## インストールとビルド
 
-リポジトリをクローンして `make` を実行します：
+リポジトリをクローンして、`cmake` と `make` を実行します：
 
 ```bash
 git clone https://github.com/goroshirow/dpad-file-explorer.git
 cd dpad-file-explorer
+mkdir build
+cd build
+cmake ..
 make
 ```
 
-これにより `dpad_explorer` 実行可能ファイルが生成されます。
+これにより `build` ディレクトリ内に `dpad_explorer` 実行可能ファイルが生成されます。
 
 ## 初期設定 (`cd`機能に必須)
 
@@ -52,8 +56,8 @@ make
 ```bash
 function dpad() {
     # コンパイルした実行ファイルの絶対パスを指定してください
-    # 例: local dest=$(/home/user/dpad-file-explorer/dpad_explorer)
-    local dest=$(/path/to/dpad_explorer)
+    # 例: local dest=$(/home/user/dpad-file-explorer/build/dpad_explorer)
+    local dest=$(/path/to/dpad-file-explorer/build/dpad_explorer)
     
     if [ -n "$dest" ]; then
         cd "$dest"

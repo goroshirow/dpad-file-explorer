@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/dpad_explorer.dir/src/main.cpp.o CMakeFiles/dpad_explorer.dir/src/app.cpp.o CMakeFiles/dpad_explorer.dir/src/file_sys.cpp.o CMakeFiles/dpad_explorer.dir/src/utils.cpp.o -o dpad_explorer  -lcurses /usr/lib/x86_64-linux-gnu/libform.so 

@@ -20,38 +20,44 @@ Instead of traditional file managers that require hitting `Enter` to open direct
 
 - **OS**: Linux / macOS (Any environment with a standard POSIX terminal)
 - **Compiler**: `g++` (C++17 or higher)
+- **Build Tool**: `cmake` (version 3.10 or higher), `make`
 - **Library**: `ncurses` (Wide character support)
 
 ### Installing Dependencies (Ubuntu/Debian)
 
 ```bash
 sudo apt update
-sudo apt install -y g++ make libncurses5-dev libncursesw5-dev
+sudo apt install -y g++ cmake make libncurses5-dev libncursesw5-dev
 ```
 
 ## Installation & Build
 
-Clone the repository and run `make`:
+Clone the repository and build using `cmake` and `make`:
 
 ```bash
-git clone https://github.com/yourusername/dpad-file-explorer.git
+git clone https://github.com/goroshirow/dpad-file-explorer.git
 cd dpad-file-explorer
+mkdir build
+cd build
+cmake ..
 make
 ```
 
-This will generate the `dpad_explorer` executable.
+This will generate the `dpad_explorer` executable in the `build` directory.
 
 ## Initial Setup (Crucial for `cd` functionality)
 
 To enable the core feature—pressing `Enter` on a directory to actually change your current shell directory—you **must** use a shell wrapper function. A child process (the C++ program) cannot change the parent shell's working directory on its own.
+
+By defining this function, you can also call the explorer from anywhere using the `dpad` command, without needing to place the executable in your `bin` directory.
 
 Add the following to your `~/.bashrc` (or `~/.zshrc`):
 
 ```bash
 function dpad() {
     # Specify the absolute path to the compiled executable
-    # Example: local dest=$(/home/user/dpad-file-explorer/dpad_explorer)
-    local dest=$(/path/to/dpad_explorer)
+    # Example: local dest=$(/home/user/dpad-file-explorer/build/dpad_explorer)
+    local dest=$(/path/to/dpad-file-explorer/build/dpad_explorer)
     
     if [ -n "$dest" ]; then
         cd "$dest"
@@ -65,7 +71,9 @@ After adding it, reload your shell config:
 source ~/.bashrc
 ```
 
-## Keybindings
+Now, simply typing `dpad` in your terminal will launch the explorer from anywhere, and exit to the selected directory.
+
+## Keybindings and Commands
 
 | Key | Action |
 | --- | --- |
@@ -75,9 +83,21 @@ source ~/.bashrc
 | `←` (Left) | Go back to the parent directory (or exit Preview focus). |
 | `Enter` | **On Directory:** Exit explorer and `cd` into it.<br>**On File:** View/edit file contents with `vi`. |
 | `/` (Slash) | **Search Mode:** Start typing to incrementally search the current directory. |
-| `:` (Colon) | **Command Mode:** Type `R` to Rename, or `D` to Delete the focused item. |
-| `ESC` | Exit Search Mode or Preview focus. |
+| `:` (Colon) | **Command Mode:** Type a command and execute it (see below). |
+| `ESC` | Exit Search Mode, Command Mode, or Preview focus. |
 | `q` or `Q` | Quit the explorer without changing directories |
+
+### Command Mode (`:`)
+
+Press `:`, type one of the following commands, and hit `Enter`:
+
+| Command | Description |
+| --- | --- |
+| `R` or `r` | **Rename** the focused item. |
+| `D` or `d` | **Delete** the focused item. Prompts for confirmation on non-empty directories. |
+| `md` | **Make Directory** (create a new directory) in the current directory. |
+| `mf` | **Make File** (create a new file) in the current directory. |
+| `unzip` | **Unzip** the focused zip file into the current directory. |
 
 ## License
 
