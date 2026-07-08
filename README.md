@@ -91,10 +91,9 @@ Now, simply typing `dpad` in your terminal will launch the explorer from anywher
 | `→` (Right) | **On Directory:** Enter the selected directory.<br>**On File:** Focus the Preview column to scroll its contents. |
 | `←` (Left) | Go back to the parent directory (or exit Preview focus). |
 | `Enter` | **On Directory:** Exit explorer and `cd` into it.<br>**On File:** View/edit file contents with `vi`. |
-| `/` (Slash) | **Search Mode:** Start typing to incrementally search the current directory. |
+| `Any Character` | **Search Mode:** Start typing to immediately incrementally search the current directory. |
 | `:` (Colon) | **Command Mode:** Type a command and execute it (see below). |
 | `ESC` | Exit Search Mode, Command Mode, or Preview focus. |
-| `q` or `Q` | Quit the explorer without changing directories |
 
 ### Command Mode (`:`)
 
@@ -102,6 +101,7 @@ Press `:`, type one of the following commands, and hit `Enter`:
 
 | Command | Description |
 | --- | --- |
+| `q` or `Q` | **Quit** the explorer without changing directories. |
 | `R` or `r` | **Rename** the focused item. |
 | `D` or `d` | **Delete** the focused item. Prompts for confirmation on non-empty directories. |
 | `md` | **Make Directory** (create a new directory) in the current directory. |

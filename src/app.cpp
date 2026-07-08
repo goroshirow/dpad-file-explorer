@@ -321,7 +321,10 @@ void App::handle_input() {
         } else if (isprint(ch)) {
             command_input += static_cast<char>(ch);
             
-            if (command_input == "r" || command_input == "R") {
+            if (command_input == "q" || command_input == "Q") {
+                should_exit = true;
+                return;
+            } else if (command_input == "r" || command_input == "R") {
                 command_mode = false;
                 if (!current_entries.empty() && current_entries[selected_idx].name != "..") {
                     rename_mode = true;
@@ -370,7 +373,7 @@ void App::handle_input() {
                 }
             } else {
                 bool valid_prefix = false;
-                std::vector<std::string> valid_commands = {"r", "R", "d", "D", "mf", "md", "unzip"};
+                std::vector<std::string> valid_commands = {"r", "R", "d", "D", "mf", "md", "unzip", "q", "Q"};
                 for (const auto& cmd : valid_commands) {
                     if (cmd.length() >= command_input.length() && cmd.substr(0, command_input.length()) == command_input) {
                         valid_prefix = true;
@@ -421,12 +424,7 @@ void App::handle_input() {
         }
     }
 
-    if (ch == 'q' || ch == 'Q') {
-        should_exit = true;
-    } else if (ch == '/') {
-        search_mode = true;
-        search_query = "";
-    } else if (ch == ':') {
+    if (ch == ':') {
         command_mode = true;
         command_input = "";
     } else if (ch == KEY_UP) {
@@ -469,22 +467,38 @@ void App::handle_input() {
                 preview_focused = true;
             }
         }
-    } else if (ch == '\n' || ch == '\r' || ch == KEY_ENTER) {
-         if (!current_entries.empty()) {
-             if (current_entries[selected_idx].is_dir) {
-                 if (current_entries[selected_idx].name == "..") {
-                     cd_path = current_path.parent_path().string();
-                 } else {
-                     cd_path = current_entries[selected_idx].path.string();
-                 }
-                 should_exit = true;
-             } else {
-                 endwin();
-                 std::string cmd = "vi \"" + current_entries[selected_idx].path.string() + "\" < /dev/tty > /dev/tty";
-                 int ret = system(cmd.c_str());
-                 (void)ret;
-                 refresh();
-             }
-         }
+     } else if (ch == '\n' || ch == '\r' || ch == KEY_ENTER) {
+          if (!current_entries.empty()) {
+              if (current_entries[selected_idx].is_dir) {
+                  if (current_entries[selected_idx].name == "..") {
+                      cd_path = current_path.parent_path().string();
+                  } else {
+                      cd_path = current_entries[selected_idx].path.string();
+                  }
+                  should_exit = true;
+              } else {
+                  endwin();
+                  std::string cmd = "vi \"" + current_entries[selected_idx].path.string() + "\" < /dev/tty > /dev/tty";
+                  int ret = system(cmd.c_str());
+                  (void)ret;
+                  refresh();
+              }
+          }
+     } else if (isprint(ch)) {
+        search_mode = true;
+        search_query = static_cast<char>(ch);
+        if (!search_query.empty()) {
+            for (int i = 0; i < static_cast<int>(current_entries.size()); ++i) {
+                auto it = std::search(
+                    current_entries[i].name.begin(), current_entries[i].name.end(),
+                    search_query.begin(), search_query.end(),
+                    [](char ch1, char ch2) { return std::tolower(ch1) == std::tolower(ch2); }
+                );
+                if (it != current_entries[i].name.end()) {
+                    selected_idx = i;
+                    break;
+                }
+            }
+        }
     }
 }
