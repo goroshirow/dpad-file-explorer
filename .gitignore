@@ -1,0 +1,9 @@
+# Build artifacts
+*.o
+dpad_explorer
+
+# Editor / OS files
+.DS_Store
+.vscode/
+*.swp
+*~
