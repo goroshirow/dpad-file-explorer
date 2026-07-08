@@ -60,8 +60,8 @@ make
 cat << 'EOF' >> ~/.bashrc
 function dpad() {
     # コンパイルした実行ファイルの絶対パスを指定してください
-    # 例: local dest=$(/home/user/dpad-file-explorer/build/dpad_explorer)
-    local dest=$(/path/to/dpad-file-explorer/build/dpad_explorer)
+    # 例: local dest=$(/home/user/dpad-file-explorer/build/dpad_explorer "$@")
+    local dest=$(/path/to/dpad-file-explorer/build/dpad_explorer "$@")
     
     if [ -n "$dest" ]; then
         cd "$dest"

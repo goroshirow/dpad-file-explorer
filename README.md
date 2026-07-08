@@ -60,8 +60,8 @@ Run the following command to append the function to your `~/.bashrc` (or `~/.zsh
 cat << 'EOF' >> ~/.bashrc
 function dpad() {
     # Specify the absolute path to the compiled executable
-    # Example: local dest=$(/home/user/dpad-file-explorer/build/dpad_explorer)
-    local dest=$(/path/to/dpad-file-explorer/build/dpad_explorer)
+    # Example: local dest=$(/home/user/dpad-file-explorer/build/dpad_explorer "$@")
+    local dest=$(/path/to/dpad-file-explorer/build/dpad_explorer "$@")
     
     if [ -n "$dest" ]; then
         cd "$dest"
