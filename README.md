@@ -2,6 +2,8 @@
 
 **English** | [日本語](./README-ja.md)
 
+![demo](image.png)
+
 A lightning-fast, keyboard-driven (Arrow keys) file explorer for the Linux terminal. 
 
 Instead of traditional file managers that require hitting `Enter` to open directories and typing commands to go back, D-pad File Explorer utilizes a 4-column "Miller columns" layout. It allows you to effortlessly navigate your entire filesystem using only the arrow keys, dramatically speeding up directory traversal.
